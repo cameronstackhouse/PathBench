@@ -4,16 +4,28 @@ import dill
 import algorithms.configuration.maps.dense_map
 from typing import NamedTuple
 
+
 class Size(NamedTuple):
     width: int
     height: int
 
-class _PointMetaClass(type(NamedTuple), type(torch.Tensor)):
-    pass
 
-class Point(NamedTuple, torch.Tensor, metaclass=_PointMetaClass):
+class Point(NamedTuple):
     x: int
     y: int
+
+    def __post_init__(self):
+        self.tensor = torch.tensor([self.x, self.y])
+
+    def __getattr__(self, name):
+        return getattr(self.tensor, name)
+
+    def __setattr__(self, name, value):
+        if name in {"x", "y"}:
+            object.__setattr__(self, name, value)
+            object.__setattr__(self, 'tensor', torch.tensor([self.x, self.y]))
+        else:
+            setattr(self.tensor, name, value)
 
 
 DenseMap = algorithms.configuration.maps.dense_map.DenseMap
@@ -24,6 +36,7 @@ convert_classes = {
     "DenseMap": lambda d: algorithms.configuration.maps.dense_map.DenseMap(d.grid)
 }
 names = ("structures.Point", "structures.Size", "algorithms.configuration.maps.dense_map.DenseMap")
+
 
 def recursive_replace_loaded_objects(obj, depth=3):
     cls_name = obj.__class__.__qualname__
@@ -51,6 +64,7 @@ def recursive_replace_loaded_objects(obj, depth=3):
                 pass
     return obj
 
+
 def load(fname):
     old_classes = tuple([eval(i) for i in names])
     exec(", ".join(i for i in names) + " = " + ", ".join(i.split(".")[-1] for i in names))
@@ -60,3 +74,4 @@ def load(fname):
     exec(", ".join(i for i in names) + " = old_classes")
 
     return recursive_replace_loaded_objects(loaded_obj)
+
