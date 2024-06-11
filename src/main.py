@@ -161,6 +161,7 @@ def configure_and_run(args: argparse.Namespace, configurers: List[Callable[[Conf
     return True
 
 def main() -> bool:
+    # TODO LOOK AT
     parser = argparse.ArgumentParser(prog="main.py",
                                      description="PathBench runner",
                                      formatter_class=argparse.RawTextHelpFormatter)

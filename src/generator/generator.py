@@ -778,7 +778,6 @@ class Generator:
         max_room_size = min(settings.generator_max_room_size, settings.generator_size)
         min_room = [min_room_size, min_room_size + 1]
         max_room = [max_room_size, max_room_size + 1]
-
         if not settings.generator_house_expo:
             if settings.generator_size == 8:  # Fill rate and nr obstacle range (1,2) is for unifrom random fill (0.1,0.2)
                 maps = generator.generate_maps(settings.generator_nr_of_examples, Size(*([8] * settings.num_dim)),
@@ -793,6 +792,7 @@ class Generator:
                                                settings.generator_gen_type, fill_rate, [1, 4], min_room, max_room, num_dim=settings.num_dim, json_save=True)
 
             else:
+                print("HERE")
                 maps = generator.generate_maps(settings.generator_nr_of_examples, Size(*([64] * settings.num_dim)),
                                                settings.generator_gen_type, fill_rate, [1, 6], min_room, max_room, num_dim=settings.num_dim, json_save=False)
 
